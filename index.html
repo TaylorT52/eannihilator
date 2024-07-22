@@ -9,6 +9,7 @@
     <p>Essay Annihilator</p>
     <p>reading google doc content & comments</p>
 
+    <!--auth buttons-->
     <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout-button" onclick="handleSignoutClick()">Sign Out</button>
 
@@ -27,6 +28,7 @@
     <script type="text/javascript">
         let CLIENT_ID;
         let API_KEY;
+        //TODO: for user update doc id here (can find in url)
         const DOC_ID = '1ewL6gdxMXMvqtvjMPGqVWW9qQWsYoJaXoln82DyDjFA'; 
         const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
         let tokenClient;
@@ -35,6 +37,7 @@
         document.getElementById('auth-button').style.visibility = "hidden";
         document.getElementById('signout-button').style.visibility = "hidden";
 
+        //loads api key and client id from config
         async function loadConfig() {
             try {
                 console.log("Loading config");
@@ -80,12 +83,14 @@
             }
         }
 
+        //enables certain buttons if apis load etc.
         function maybeEnableButtons() {
             if (gapiInited && gisInited) {
                 document.getElementById("auth-button").style.visibility = "visible";
             }
         }
 
+        //authenticates user
         function handleAuthClick() {
             console.log("Auth button clicked");
             tokenClient.callback = async (resp) => {
@@ -105,6 +110,7 @@
             }
         }
 
+        //user signs out
         function handleSignoutClick() {
             const token = gapi.client.getToken();
             if (token !== null) {
@@ -117,6 +123,7 @@
             }
         }
 
+        //reads google doc content
         async function readGoogleDoc() {
             try {
                 const response = await gapi.client.docs.documents.get({
@@ -140,6 +147,7 @@
             }
         }
 
+        //reads comment content, author, and marks location
         async function readGoogleDocComments() {
             try {
                 const response = await gapi.client.drive.comments.list({
@@ -168,8 +176,6 @@
                 console.error("Error reading the comments:", err);
             }
         }
-        
-
         loadConfig();
     </script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
