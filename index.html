@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Google Apps API Quickstart</title>
+    <title>Google Doc Reader</title>
+    <link rel="stylesheet" href="index.css">
     <meta charset="utf-8"/>
 </head>
 <body>
-    <p>Testing google apps script</p>
+    <p>Essay Annihilator</p>
+    <p>reading google doc content & comments</p>
 
     <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout-button" onclick="handleSignoutClick()">Sign Out</button>
-    <pre id="content" style="white-space: pre-wrap;"></pre>
+
+    <!--content & comments-->
+    <p>document content</p>
+    <div id="doc-content">
+        <pre id="content" style="white-space: pre-wrap;"></pre>
+    </div>
+    <br>
+
+    <p>document comments</p>
+    <div id="doc-comments">
+        <pre id="comments" style="white-space: pre-wrap;"></pre>
+    </div>
+    
     <script type="text/javascript">
         let CLIENT_ID;
         let API_KEY;
         const DOC_ID = '1ewL6gdxMXMvqtvjMPGqVWW9qQWsYoJaXoln82DyDjFA'; 
-        const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/script.projects';
+        const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
         let tokenClient;
         let gapiInited = false;
         let gisInited = false;
@@ -43,7 +57,7 @@
             try {
                 await gapi.client.init({
                     apiKey: API_KEY,
-                    discoveryDocs: ['https://docs.googleapis.com/$discovery/rest?version=v1'],
+                    discoveryDocs: ['https://docs.googleapis.com/$discovery/rest?version=v1', 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
                 });
                 gapiInited = true;
                 maybeEnableButtons();
@@ -81,6 +95,7 @@
                 document.getElementById('signout-button').style.visibility = "visible";
                 document.getElementById('auth-button').innerText = "Refresh";
                 await readGoogleDoc();
+                await readGoogleDocComments();
             };
 
             if (gapi.client.getToken() === null) {
@@ -96,6 +111,7 @@
                 google.accounts.oauth2.revoke(token.access_token);
                 gapi.client.setToken(null);
                 document.getElementById("content").innerText = "";
+                document.getElementById("comments").innerText = "";
                 document.getElementById("auth-button").innerText = "Authorize";
                 document.getElementById("signout-button").style.visibility = "hidden";
             }
@@ -121,6 +137,30 @@
             } catch (err) {
                 document.getElementById("content").innerText = err.message;
                 console.error("Error reading the Google Doc:", err);
+            }
+        }
+
+        async function readGoogleDocComments() {
+            try {
+                const response = await gapi.client.drive.comments.list({
+                    fileId: DOC_ID,
+                });
+                const comments = response.result.comments;
+                let commentText = "";
+                if (comments && comments.length > 0) {
+                    comments.forEach(comment => {
+                        if (comment.author && comment.author.displayName && comment.content) {
+                            commentText += `Author: ${comment.author.displayName}\n`;
+                            commentText += `Content: ${comment.content}\n\n`;
+                        }
+                    });
+                } else {
+                    commentText = "No comments found.";
+                }
+                document.getElementById("comments").innerText = commentText;
+            } catch (err) {
+                document.getElementById("comments").innerText = err.message;
+                console.error("Error reading the comments:", err);
             }
         }
 
