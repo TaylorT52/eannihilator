@@ -144,6 +144,7 @@
             try {
                 const response = await gapi.client.drive.comments.list({
                     fileId: DOC_ID,
+                    fields: 'comments(author/displayName,content,quotedFileContent)'
                 });
                 const comments = response.result.comments;
                 let commentText = "";
@@ -151,7 +152,11 @@
                     comments.forEach(comment => {
                         if (comment.author && comment.author.displayName && comment.content) {
                             commentText += `Author: ${comment.author.displayName}\n`;
-                            commentText += `Content: ${comment.content}\n\n`;
+                            commentText += `Content: ${comment.content}\n`;
+                            if (comment.quotedFileContent && comment.quotedFileContent.value) {
+                                commentText += `Location: ${comment.quotedFileContent.value}\n`;
+                            }
+                            commentText += `\n`;
                         }
                     });
                 } else {
@@ -163,6 +168,7 @@
                 console.error("Error reading the comments:", err);
             }
         }
+        
 
         loadConfig();
     </script>
