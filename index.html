@@ -12,7 +12,16 @@
     <!--auth buttons-->
     <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout-button" onclick="handleSignoutClick()">Sign Out</button>
-
+    
+    <div>
+        <label for="essayInput">Enter your essay:</label>
+        <textarea id="essayInput" rows="10" cols="50"></textarea><br>
+        <button id="submitButton" onclick="handleSubmit()">Submit</button>
+    </div>
+    <br>
+    <br>
+    <!-- Response Section -->
+    <div id="response"></div>
     <!--content & comments-->
     <p>document content</p>
     <div id="doc-content">

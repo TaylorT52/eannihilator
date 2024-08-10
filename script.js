@@ -1,14 +1,13 @@
-
-import OpenAI from "openai";
+const OpenAI = require('openai');
+const fs = require('fs');
 
 let CLIENT_ID;
 let API_KEY;
-
+let OPENAI_KEY;
+let OPENAI_CLIENT;
 //TODO: for user update doc id here (can find in url)
 const DOC_ID = '1gk3Z5u4EMDQSyQkiE2i4DCDzh8GFnENhkIFY0OtvYB8'; 
 const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
-const openai = new OpenAI();
-const fs = require('fs');
 const systemPath = "system_prompt.txt";
 const systemPrompt = fs.readFileSync(systemPath, 'utf-8');
 let tokenClient;
@@ -25,6 +24,8 @@ async function loadConfig() {
         const config = await response.json();
         CLIENT_ID = config.clientId;
         API_KEY = config.apiKey;
+        OPENAI_KEY = config.openAIKey;
+        OPENAI_CLIENT = new OpenAI({apiKey: OPENAI_KEY});
         gapiLoaded();
         gisLoaded();
     } catch (err) {
@@ -167,6 +168,19 @@ async function editEssay(essay) {
       });
       console.log(response.choices[0]);
       return response.choices[0];
+}
+
+// Function to handle the submit button click
+async function handleSubmit() {
+    console.log("Handling submit");
+    // Get the essay input from the textbox
+    const essay = document.getElementById('essayInput').value;
+
+    // Call the editEssay function with the user's input
+    const response = await editEssay(essay);
+
+    // Display the response in a div
+    document.getElementById('response').innerText = response.message;
 }
 
 loadConfig();
