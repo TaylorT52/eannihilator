@@ -1,10 +1,16 @@
 
+import OpenAI from "openai";
+
 let CLIENT_ID;
 let API_KEY;
 
 //TODO: for user update doc id here (can find in url)
-const DOC_ID = '1ewL6gdxMXMvqtvjMPGqVWW9qQWsYoJaXoln82DyDjFA'; 
+const DOC_ID = '1gk3Z5u4EMDQSyQkiE2i4DCDzh8GFnENhkIFY0OtvYB8'; 
 const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
+const openai = new OpenAI();
+const fs = require('fs');
+const systemPath = "system_prompt.txt";
+const systemPrompt = fs.readFileSync(systemPath, 'utf-8');
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
@@ -150,4 +156,17 @@ async function readGoogleDocComments() {
         console.error("Error reading the comments:", err);
     }
 }
+// Calling ChatGPT query
+async function editEssay(essay) {
+    const response = await openai.chat.completions.create({
+        messages: [
+            {"role": "system", "content": systemPrompt},
+            {"role": "user", "content": `Essay:\n\n${essay}`}
+          ],
+        model: "gpt-4o",
+      });
+      console.log(response.choices[0]);
+      return response.choices[0];
+}
+
 loadConfig();
