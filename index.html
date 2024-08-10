@@ -9,6 +9,12 @@
     <p>Essay Annihilator</p>
     <p>reading google doc content & comments</p>
 
+    <p>Enter the link for the document that you would like to read! (must have editing access on it)</p>
+    <form id="link-input">
+        <input type="text" id="user-input-link" name="linkInput"/>
+        <button type="submit">Submit</button>
+    </form>
+
     <!--auth buttons-->
     <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout-button" onclick="handleSignoutClick()">Sign Out</button>
@@ -25,6 +31,7 @@
         <pre id="comments" style="white-space: pre-wrap;"></pre>
     </div>
     
+    <!--load js script that manages auth, etc.-->
     <script src="script.js"></script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>

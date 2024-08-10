@@ -1,15 +1,24 @@
-
 let CLIENT_ID;
 let API_KEY;
 
-//TODO: for user update doc id here (can find in url)
-const DOC_ID = '1ewL6gdxMXMvqtvjMPGqVWW9qQWsYoJaXoln82DyDjFA'; 
+//defines the permissions that the app will request
 const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
+const DOC_ID = "1p2p9opKV3S94Efm9WCk65BC8PYTxAokUmsKRrQPsM64";
 let tokenClient;
+//bools to see if google api and identity services have inited
 let gapiInited = false;
 let gisInited = false;
+
+//buttons 
 document.getElementById('auth-button').style.visibility = "hidden";
 document.getElementById('signout-button').style.visibility = "hidden";
+
+//get doc id from input link
+function extractDocId(url) {
+    let parts = url.split('/');
+    let docId = parts[5];
+    return docId;
+}
 
 //loads api key and client id from config
 async function loadConfig() {
@@ -26,10 +35,12 @@ async function loadConfig() {
     }
 }
 
+//loads google api client library
 function gapiLoaded() {
     gapi.load("client", initializeGapiClient);
 }
 
+//initializes google api client w/ api key and discovery docs
 async function initializeGapiClient() {
     try {
         await gapi.client.init({
@@ -43,6 +54,7 @@ async function initializeGapiClient() {
     }
 }
 
+//initializes identity services client (how authorization works)
 function gisLoaded() {
     try {
         tokenClient = google.accounts.oauth2.initTokenClient({
@@ -97,7 +109,7 @@ function handleSignoutClick() {
     }
 }
 
-//reads google doc content
+//reads google doc content and displays
 async function readGoogleDoc() {
     try {
         const response = await gapi.client.docs.documents.get({
