@@ -3,6 +3,7 @@
 <head>
     <title>Google Doc Reader</title>
     <link rel="stylesheet" href="index.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <meta charset="utf-8"/>
 </head>
 <body>
@@ -19,22 +20,31 @@
     <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout-button" onclick="handleSignoutClick()">Sign Out</button>
 
-    <!--content & comments-->
-    <p>document content</p>
-    <div id="doc-content">
-        <pre id="content" style="white-space: pre-wrap;"></pre>
-    </div>
-    <br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-7">
+                <!--content & comments-->
+                <b><h4 id="doc-header">Document</h4></b>
+                <div id="doc-content">
+                    <pre id="content" style="white-space: pre-wrap;"></pre>
+                </div>
+                <br>
 
-    <p>document comments</p>
-    <div id="doc-comments">
-        <pre id="comments" style="white-space: pre-wrap;"></pre>
+                <b><h4 id="doc-header">Document Comments</h4></b>
+                <div id="doc-comments">
+                    <pre id="comments" style="white-space: pre-wrap;"></pre>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <!--response and gpt querying-->
+                <b><h4>Review Suggestions</h4></b>
+                <button id="query">Get suggestions</button>
+                <div id="query-response"></div>
+            </div>
+        </div>
     </div>
 
-    <!--response and gpt querying-->
-    <button id="query">Make a GPT query</button>
-    <div id="query-response"></div>
-    
     <!--load js script that manages auth, etc.-->
     <script src="script.js"></script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>

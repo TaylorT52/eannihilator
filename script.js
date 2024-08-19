@@ -23,7 +23,7 @@ function extractDocId(url) {
     return docId;
 }
 
-//loads api key and client id from config
+//loads api key, gpt api key, & client id from config
 async function loadConfig() {
     try {
         console.log("Loading config");
