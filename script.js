@@ -29,9 +29,9 @@ async function loadConfig() {
         console.log("Loading config");
         const response = await fetch("config.json");
         const config = await response.json();
+        OPEN_API_KEY = config.openApiKey; 
         CLIENT_ID = config.clientId;
         API_KEY = config.apiKey;
-        OPEN_API_KEY = config.openApiKey; 
         gapiLoaded();
         gisLoaded();
     } catch (err) {
@@ -40,42 +40,50 @@ async function loadConfig() {
 }
 
 //event listener on button to trigger query
-document.getElementById("query").addEventListener("click", queryGPT);
+document.getElementById("query").addEventListener("click", displayResponse);
 
 //makes a query
 async function queryGPT() {
     console.log("making a query...")
-    const response = await fetch("https://api.openai.com/v1/completions", {
+    try{
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${OPEN_API_KEY}`
         },
+        //TODO can modify temperature for varying results
         body: JSON.stringify({
-            model: "gpt-4", //TODO: make sure that you have access to gpt-4
+            model: "gpt-4",
             messages: [{role: "user", content: GPT_QUERY}],
+            temperature: 0,
             max_tokens: 1500 
         })
     });
 
     if (!response.ok) {
-        const message = `Error: ${response.statusText}`;
+        const message = `error with response: ${response.statusText}`;
         console.error(message);
         throw new Error(message);
     }
 
     const data = await response.json();
     return data.choices[0].message.content;
+    } catch (err) {
+        console.error("error:", err);
+        throw err;
+    }
 }
 
-//display response
-async function displayResponse(){
+//get and display response on index
+async function displayResponse() {
     try {
-        const prompt = GPT_QUERY
-        const response = await queryGPT(prompt);
+        const response = await queryGPT();
+        console.log(response)
         document.getElementById("query-response").innerText = response;
     } catch (err) {
-        console.log("An error occurred:", err)
+        console.log("error:", err);
+        document.getElementById("query-response").innerText = "error: " + err.message;
     }
 }
 
