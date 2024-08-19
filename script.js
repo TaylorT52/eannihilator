@@ -1,11 +1,14 @@
 let CLIENT_ID;
 let API_KEY;
+let OPEN_API_KEY;
 
 //defines the permissions that the app will request
 const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
 const DOC_ID = "1p2p9opKV3S94Efm9WCk65BC8PYTxAokUmsKRrQPsM64";
-let tokenClient;
+const GPT_QUERY = "Why is the sky blue?";
+
 //bools to see if google api and identity services have inited
+let tokenClient;
 let gapiInited = false;
 let gisInited = false;
 
@@ -28,10 +31,51 @@ async function loadConfig() {
         const config = await response.json();
         CLIENT_ID = config.clientId;
         API_KEY = config.apiKey;
+        OPEN_API_KEY = config.openApiKey; 
         gapiLoaded();
         gisLoaded();
     } catch (err) {
         console.error('Error loading config:', err);
+    }
+}
+
+//event listener on button to trigger query
+document.getElementById("query").addEventListener("click", queryGPT);
+
+//makes a query
+async function queryGPT() {
+    console.log("making a query...")
+    const response = await fetch("https://api.openai.com/v1/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${OPEN_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: "gpt-4", //TODO: make sure that you have access to gpt-4
+            messages: [{role: "user", content: GPT_QUERY}],
+            max_tokens: 1500 
+        })
+    });
+
+    if (!response.ok) {
+        const message = `Error: ${response.statusText}`;
+        console.error(message);
+        throw new Error(message);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+}
+
+//display response
+async function displayResponse(){
+    try {
+        const prompt = GPT_QUERY
+        const response = await queryGPT(prompt);
+        document.getElementById("query-response").innerText = response;
+    } catch (err) {
+        console.log("An error occurred:", err)
     }
 }
 
