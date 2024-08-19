@@ -1,15 +1,27 @@
-
 let CLIENT_ID;
 let API_KEY;
+let OPEN_API_KEY;
 
-//TODO: for user update doc id here (can find in url)
-const DOC_ID = '1ewL6gdxMXMvqtvjMPGqVWW9qQWsYoJaXoln82DyDjFA'; 
+//defines the permissions that the app will request
 const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
+const DOC_ID = "1p2p9opKV3S94Efm9WCk65BC8PYTxAokUmsKRrQPsM64";
+const GPT_QUERY = "Why is the sky blue?";
+
+//bools to see if google api and identity services have inited
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
+
+//buttons 
 document.getElementById('auth-button').style.visibility = "hidden";
 document.getElementById('signout-button').style.visibility = "hidden";
+
+//get doc id from input link
+function extractDocId(url) {
+    let parts = url.split('/');
+    let docId = parts[5];
+    return docId;
+}
 
 //loads api key and client id from config
 async function loadConfig() {
@@ -17,6 +29,7 @@ async function loadConfig() {
         console.log("Loading config");
         const response = await fetch("config.json");
         const config = await response.json();
+        OPEN_API_KEY = config.openApiKey; 
         CLIENT_ID = config.clientId;
         API_KEY = config.apiKey;
         gapiLoaded();
@@ -26,10 +39,60 @@ async function loadConfig() {
     }
 }
 
+//event listener on button to trigger query
+document.getElementById("query").addEventListener("click", displayResponse);
+
+//makes a query
+async function queryGPT() {
+    console.log("making a query...")
+    try{
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${OPEN_API_KEY}`
+        },
+        //TODO can modify temperature for varying results
+        body: JSON.stringify({
+            model: "gpt-4",
+            messages: [{role: "user", content: GPT_QUERY}],
+            temperature: 0,
+            max_tokens: 1500 
+        })
+    });
+
+    if (!response.ok) {
+        const message = `error with response: ${response.statusText}`;
+        console.error(message);
+        throw new Error(message);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+    } catch (err) {
+        console.error("error:", err);
+        throw err;
+    }
+}
+
+//get and display response on index
+async function displayResponse() {
+    try {
+        const response = await queryGPT();
+        console.log(response)
+        document.getElementById("query-response").innerText = response;
+    } catch (err) {
+        console.log("error:", err);
+        document.getElementById("query-response").innerText = "error: " + err.message;
+    }
+}
+
+//loads google api client library
 function gapiLoaded() {
     gapi.load("client", initializeGapiClient);
 }
 
+//initializes google api client w/ api key and discovery docs
 async function initializeGapiClient() {
     try {
         await gapi.client.init({
@@ -43,6 +106,7 @@ async function initializeGapiClient() {
     }
 }
 
+//initializes identity services client (how authorization works)
 function gisLoaded() {
     try {
         tokenClient = google.accounts.oauth2.initTokenClient({
@@ -97,7 +161,7 @@ function handleSignoutClick() {
     }
 }
 
-//reads google doc content
+//reads google doc content and displays
 async function readGoogleDoc() {
     try {
         const response = await gapi.client.docs.documents.get({
