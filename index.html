@@ -7,14 +7,9 @@
     <meta charset="utf-8"/>
 </head>
 <body>
-    <p>Essay Annihilator</p>
-    <p>reading google doc content & comments</p>
-
-    <p>Enter the link for the document that you would like to read! (must have editing access on it)</p>
-    <form id="link-input">
-        <input type="text" id="user-input-link" name="linkInput"/>
-        <button type="submit">Submit</button>
-    </form>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">Essay Annihilator</a>
+    </nav>
 
     <!--auth buttons-->
     <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
@@ -25,9 +20,17 @@
             <div class="col-md-7">
                 <!--content & comments-->
                 <b><h4 id="doc-header">Document</h4></b>
+
+                <p>Enter the link for the document that you would like to read! (must have editing access on it)</p>
+                <form id="link-input" onsubmit="return handleSubmit(event)">
+                    <input type="text" id="user-input-link" name="linkInput"/>
+                    <button type="submit">Submit</button>
+                </form>
+                
                 <div id="doc-content">
                     <pre id="content" style="white-space: pre-wrap;"></pre>
                 </div>
+
                 <br>
 
                 <b><h4 id="doc-header">Document Comments</h4></b>

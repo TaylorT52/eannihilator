@@ -4,13 +4,15 @@ let OPEN_API_KEY;
 
 //defines the permissions that the app will request
 const SCOPES = 'https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/script.projects';
-const DOC_ID = "1p2p9opKV3S94Efm9WCk65BC8PYTxAokUmsKRrQPsM64";
 const GPT_QUERY = "Why is the sky blue?";
 
 //bools to see if google api and identity services have inited
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
+
+//for document
+let DOC_ID;
 
 //buttons 
 document.getElementById('auth-button').style.visibility = "hidden";
@@ -21,6 +23,21 @@ function extractDocId(url) {
     let parts = url.split('/');
     let docId = parts[5];
     return docId;
+}
+
+//submission to get doc id
+function handleSubmit(event) {
+    event.preventDefault(); 
+    const url = document.getElementById('user-input-link').value;
+    DOC_ID = extractDocId(url);
+
+    if (!DOC_ID) {
+        alert('Invalid Google Doc link. Please check the link and try again.');
+        return false;
+    }
+
+    document.getElementById('auth-button').style.visibility = "visible";
+    return false;
 }
 
 //loads api key, gpt api key, & client id from config
