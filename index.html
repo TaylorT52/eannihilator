@@ -30,12 +30,12 @@
                         <div class="form-group mx-sm-3 mb-2">
                             <input type="text" class="form-control" id="user-input-link" name="linkInput"/>
                         </div>
-                        <button type="submit" class="btn btn-primary mb-2">Ok</button>
+                        <button type="submit" onclick="handleAuthClick()" class="btn btn-primary mb-2">Ok</button>
                     </form>
                     
                     <!--auth buttons-->
-                    <button id="auth-button" class="btn btn-primary mb-2" onclick="handleAuthClick()">Authorize Drive Access</button>
                     <button id="signout-button" class="btn btn-primary mb-2" onclick="handleSignoutClick()">Sign Out Of Drive</button>
+                    <button id="auth-button" class="btn btn-primary mb-2" onclick="handleAuthClick()">Authorize Drive Access</button>
 
                     <br>
                     <hr>

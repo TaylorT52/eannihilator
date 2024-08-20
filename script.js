@@ -36,9 +36,35 @@ function handleSubmit(event) {
         return false;
     }
 
-    document.getElementById('auth-button').style.visibility = "visible";
+    //check the g is inited
+    if (gisInited) {
+        handleAuthClick();
+    } else {
+        alert('Google Identity Services not yet initialized. Please try again.');
+    }
     return false;
 }
+
+//authenticates user
+function handleAuthClick() {
+    console.log("Auth button clicked");
+    tokenClient.callback = async (resp) => {
+        if (resp.error !== undefined) {
+            throw (resp);
+        }
+        document.getElementById('signout-button').style.visibility = "visible";
+        await readGoogleDoc();
+        await readGoogleDocComments();
+    };
+
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({"prompt": "consent"});
+    } else {
+        readGoogleDoc();
+        readGoogleDocComments();
+    }
+}
+
 
 //loads api key, gpt api key, & client id from config
 async function loadConfig() {
@@ -142,26 +168,6 @@ function gisLoaded() {
 function maybeEnableButtons() {
     if (gapiInited && gisInited) {
         document.getElementById("auth-button").style.visibility = "visible";
-    }
-}
-
-//authenticates user
-function handleAuthClick() {
-    console.log("Auth button clicked");
-    tokenClient.callback = async (resp) => {
-        if (resp.error !== undefined) {
-            throw (resp);
-        }
-        document.getElementById('signout-button').style.visibility = "visible";
-        document.getElementById('auth-button').innerText = "Refresh";
-        await readGoogleDoc();
-        await readGoogleDocComments();
-    };
-
-    if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({"prompt": "consent"});
-    } else {
-        tokenClient.requestAccessToken({"prompt": ""});
     }
 }
 
