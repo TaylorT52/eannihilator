@@ -11,9 +11,7 @@
         <a class="navbar-brand" href="#">Essay Annihilator</a>
     </nav>
 
-    <!--auth buttons-->
-    <button id="auth-button" onclick="handleAuthClick()">Authorize</button>
-    <button id="signout-button" onclick="handleSignoutClick()">Sign Out</button>
+    <br>
 
     <div class="container-fluid">
         <div class="row">
@@ -21,18 +19,35 @@
                 <!--content & comments-->
                 <b><h4 id="doc-header">Document</h4></b>
 
-                <p>Enter the link for the document that you would like to read! (must have editing access on it)</p>
-                <form id="link-input" onsubmit="return handleSubmit(event)">
-                    <input type="text" id="user-input-link" name="linkInput"/>
-                    <button type="submit">Submit</button>
-                </form>
-                
                 <div id="doc-content">
-                    <pre id="content" style="white-space: pre-wrap;"></pre>
+                    <div class="row">
+                        <p>Enter the link for the document that you would like to read! (must have editing access on it)</p>
+                        <p>To submit a new document, insert a link, then click refresh</p>
+                    </div>
+              
+                    <!--form to submit link-->
+                    <form class="form-inline" id="link-input"  onsubmit="return handleSubmit(event)">
+                        <div class="form-group mx-sm-3 mb-2">
+                            <input type="text" class="form-control" id="user-input-link" name="linkInput"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Ok</button>
+                    </form>
+                    
+                    <!--auth buttons-->
+                    <button id="auth-button" class="btn btn-primary mb-2" onclick="handleAuthClick()">Authorize Drive Access</button>
+                    <button id="signout-button" class="btn btn-primary mb-2" onclick="handleSignoutClick()">Sign Out Of Drive</button>
+
+                    <br>
+                    <hr>
+
+                    <!--where content goes-->
+                    <div class="row">
+                        <pre id="content" style="white-space: pre-wrap;"></pre>
+                    </div>
                 </div>
 
                 <br>
-
+                <!--document comments-->
                 <b><h4 id="doc-header">Document Comments</h4></b>
                 <div id="doc-comments">
                     <pre id="comments" style="white-space: pre-wrap;"></pre>

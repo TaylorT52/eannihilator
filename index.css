@@ -26,6 +26,11 @@
     margin-left: 6rem;
 }
 
+#navbar-brand{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 h4{
     margin-bottom: 2rem
 }
